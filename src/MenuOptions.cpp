@@ -78,8 +78,9 @@ class MenuOptions{
                 "3. Delete Book Record",
                 "4. Borrow Book",
                 "5. Return Book",
-                "6. View Record",
-                "7. Exit"
+                "6. Edit Record",
+                "7. View All Books",
+                "8. Exit"
             };
             cout << endl;
             center(windowSize/2, "-", "LIBRARY INVENTORY SYSTEM");
@@ -117,7 +118,7 @@ class MenuOptions{
                 cout << "Pick a Number: ";
                 cin >> pickMenu;
 
-            }while(pickMenu > 7 || pickMenu < 1);
+            }while(pickMenu > 8 || pickMenu < 1);
 
             bool flag = true;
             while(flag){
@@ -140,6 +141,9 @@ class MenuOptions{
                     editRecord();
                     flag = false;
                 }else if(pickMenu == 7){
+                    displayAllBooks();
+                    flag = false;
+                }else if(pickMenu == 8){
                     exitProgram();
                     flag = false;
                 }
@@ -271,6 +275,8 @@ class MenuOptions{
                 cout << "BOOK QUANTITY: ";
                 buffer(buffAllowance - to_string(readBook.quantity).length(), "-");
                 cout << " " << readBook.quantity << endl;
+
+                readFile.close();
                 
 
                 backToMenu();
@@ -600,7 +606,6 @@ class MenuOptions{
                                 file.close();
                             }
                         }
-                        // for writing files
                         
 
                         backToMenu();
@@ -620,12 +625,274 @@ class MenuOptions{
         }
 
         void editRecord(){
-            //edit
+            //edit record
+            system("cls");
+            cin.clear();
+            cin.sync();
+
+            center(windowSize/2, "-", "Edit Record");
+            cout << endl;
+
+            string editBook;
+
+            buffer(windowSize / 3, " ");
+            cout << "Enter the name of the Book: ";
+            getline(cin, editBook);
+
+            if(!exists(".\\src\\Database\\" + convertToUnderScore(editBook) + ".dat")){
+                cout << endl;
+                center(windowSize/2, " ", "No Book Found");
+                backToMenu();
+            }else{
+                cout << endl;
+                center(windowSize/2, " ", "Book Found");
+                // for reading files
+                Book readBook;
+                fstream readFile(".\\src\\Database\\" + convertToUnderScore(editBook) + ".dat", ios::in | ios::out);
+                readFile.seekg(0);
+                if(!readFile.is_open()){
+                    cout << endl;
+                    center(windowSize/2, " ", "error occured while opening the file, Please try again");
+                }else{  
+                    getline(readFile, readBook.bookName);
+                    getline(readFile, readBook.authorName);
+                    getline(readFile, readBook.isbn);
+                    getline(readFile, readBook.genre);
+                    readFile >> readBook.quantity;
+                }
+                int buffAllowance = 50;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK TITLE: ";
+                buffer(buffAllowance - readBook.bookName.length() + 3, "-");
+                cout << " " << readBook.bookName << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "AUTHOR: ";
+                buffer(buffAllowance - readBook.authorName.length() + 7, "-");
+                cout << " " << readBook.authorName << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK ISBN: ";
+                buffer(buffAllowance - readBook.isbn.length() + 4, "-");
+                cout << " " << readBook.isbn << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK GENRE: ";
+                buffer(buffAllowance - readBook.genre.length() + 3, "-");
+                cout << " " << readBook.genre << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK QUANTITY: ";
+                buffer(buffAllowance - to_string(readBook.quantity).length(), "-");
+                cout << " " << readBook.quantity << endl;
+
+                readFile.close();
+                
+                int pickEdit;
+                cout << endl;
+                buffer(windowSize / 3, " ");
+                cout << "1. TITLE" << endl;
+                buffer(windowSize / 3, " ");
+                cout << "2. AUTHOR" << endl;
+                buffer(windowSize / 3, " ");
+                cout << "3. ISBN" << endl;
+                buffer(windowSize / 3, " ");
+                cout << "4. GENRE" << endl;
+                buffer(windowSize / 3, " ");
+                cout << "5. QUANTITY" << endl;
+                buffer(windowSize / 3, " ");
+                cout << "6. CHANGE ALL" << endl;
+                buffer(windowSize / 3, " ");
+                cout << "What do you want to edit? pick a number: ";
+                cin >> pickEdit;
+
+                while(pickEdit > 6 || pickEdit < 0){
+                    buffer(windowSize / 3, " ");
+                    cout << "Please pick a number between 1-5: ";
+                    cin >> pickEdit;
+                }
+
+                string bookName = readBook.bookName;
+                transform(bookName.begin(), bookName.end(), bookName.begin(), ::toupper);
+                
+                if(pickEdit == 1){
+                    string editElement;
+                    cin.clear();
+                    cin.sync();
+                    cout << endl;
+                    buffer(windowSize / 3, " ");
+                    cout << "TITLE~" << endl;
+                    buffer(windowSize / 3, " ");
+                    
+                    cout << "Change " << readBook.bookName << " to: ";
+                    getline(cin, editElement);
+                    readBook.bookName = editElement;
+                }else if(pickEdit == 2){
+                    string editElement;
+                    cin.clear();
+                    cin.sync();
+                    cout << endl;
+                    buffer(windowSize / 3, " ");
+                    cout << "AUTHOR~" << endl;
+                    buffer(windowSize / 3, " ");
+                    
+                    cout << "Change " << readBook.authorName << " to: ";
+                    getline(cin, editElement);
+                    readBook.authorName = editElement;
+                }else if(pickEdit == 3){
+                    string editElement;
+                    cin.clear();
+                    cin.sync();
+                    cout << endl;
+                    buffer(windowSize / 3, " ");
+                    cout << "ISBN~" << endl;
+                    buffer(windowSize / 3, " ");
+
+                    cout << "Change " << readBook.isbn << " to: ";
+                    getline(cin, editElement);
+                    readBook.isbn = editElement;
+                }else if(pickEdit == 4){
+                    string editElement;
+                    cin.clear();
+                    cin.sync();
+                    cout << endl;
+                    buffer(windowSize / 3, " ");
+                    cout << "GENRE~" << endl;
+                    buffer(windowSize / 3, " ");
+
+                    cout << "Change " << readBook.genre << " to: ";
+                    getline(cin, editElement);
+                    readBook.isbn = editElement;
+                }else if(pickEdit == 5){
+                    int editElement;
+                    cin.clear();
+                    cin.sync();
+                    cout << endl;
+                    buffer(windowSize / 3, " ");
+                    cout << "QUANTITY~" << endl;
+                    buffer(windowSize / 3, " ");
+
+                    cout << "Change " << readBook.quantity << " pc/pcs to: ";
+                    cin >> editElement;
+                    while(editElement > 100 || editElement < 0){
+                        cout << endl;
+                        buffer(windowSize / 3, " ");
+                        cout << "Change " << readBook.quantity << " pc/pcs to: ";
+                        cin >> editElement;
+                        readBook.quantity = editElement;
+                    }
+
+                    readBook.quantity = editElement;
+                    
+                }else if(pickEdit == 6){
+                    string newBookName, newAuthorName, newISBN, newGenre;
+                    int newQuantity;
+                    cin.clear();
+                    cin.sync();
+
+                    //BOOK TITLE
+                    cout << endl;
+                    buffer(windowSize / 3, " ");
+                    cout << "TITLE~" << endl;
+                    buffer(windowSize / 3, " ");
+                    
+                    cout << "Change " << readBook.bookName << " to: ";
+                    getline(cin, newBookName);
+
+                    //AUTHOR
+                    cout << endl;
+                    buffer(windowSize / 3, " ");
+                    cout << "AUTHOR~" << endl;
+                    buffer(windowSize / 3, " ");
+                    
+                    cout << "Change " << readBook.authorName << " to: ";
+                    getline(cin, newAuthorName);
+
+                    //BOOK ISBN
+                    cout << endl;
+                    buffer(windowSize / 3, " ");
+                    cout << "ISBN~" << endl;
+                    buffer(windowSize / 3, " ");
+
+                    cout << "Change " << readBook.isbn << " to: ";
+                    getline(cin, newISBN);
+
+                    //GENRE
+                    cout << endl;
+                    buffer(windowSize / 3, " ");
+                    cout << "GENRE~" << endl;
+                    buffer(windowSize / 3, " ");
+
+                    cout << "Change " << readBook.genre << " to: ";
+                    getline(cin, newGenre);
+
+                    //QUANTITY
+                    cout << endl;
+                    buffer(windowSize / 3, " ");
+                    cout << "QUANTITY~" << endl;
+                    buffer(windowSize / 3, " ");
+
+                    cout << "Change " << readBook.quantity << " pc/pcs to: ";
+                    cin >> newQuantity;
+                    while(newQuantity > 100 || newQuantity < 0){
+                        cout << endl;
+                        buffer(windowSize / 3, " ");
+                        cout << "Change " << readBook.quantity << " pc/pcs to: ";
+                        cin >> newQuantity;
+                        
+                    }
+
+                    readBook.bookName = newBookName;
+                    readBook.authorName = newAuthorName;
+                    readBook.isbn = newISBN;
+                    readBook.genre = newGenre;
+                    readBook.quantity = newQuantity;
+
+                }
+
+                string path = "./src/Database/" + convertToUnderScore(editBook) + ".dat";
+                string newFilename = readBook.bookName;
+
+                // use for edit files
+                if(remove(path.c_str()) != 0){
+                    buffer(windowSize / 3, " ");
+                    perror("There's an error in deleting the file.");
+                    // cout << "There's an error in deleting the file.";
+                }else{
+                    Book newBook(readBook.bookName, readBook.authorName, readBook.isbn, readBook.genre, readBook.quantity);
+                    transform(newFilename.begin(), newFilename.end(), newFilename.begin(), ::tolower);
+                    // cout << exists("HumptyD1umpy.dat");
+                    if(!exists(".\\src\\Database\\" + convertToUnderScore(newFilename) + ".dat")){
+                        fstream file(".\\src\\Database\\" + convertToUnderScore(newFilename) + ".dat" , ios::in | ios::out | ios:: trunc);
+                        
+                        if(!file.is_open()){
+                            cout << endl;
+                            center(windowSize/2, " ", "error occured while opening the file, Please try again");
+                        }else{  
+                            // file.write((char *) &newBook, sizeof(Book));
+                            file << readBook.bookName << endl;
+                            file << readBook.authorName << endl;
+                            file << readBook.isbn << endl;
+                            file << readBook.genre << endl;
+                            file << readBook.quantity;
+                        }
+                        file.close();
+                    }
+                }
+
+                backToMenu();
+                
+            }
         }
 
         void exitProgram(){
             system("cls");
             exit(0);
+        }
+
+        void displayAllBooks(){
+            cout << "display";
         }
 
 };
