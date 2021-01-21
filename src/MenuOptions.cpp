@@ -6,11 +6,7 @@
 #include <algorithm>
 #include <cstring>
 
-
-// #include "./Book.cpp"
-
 using namespace std;
-
 class MenuOptions{
     int windowSize = getScreenSize();
 
@@ -209,7 +205,7 @@ class MenuOptions{
                 cout << endl;
                 center(windowSize/2, " ", "Book Already Existed");
             }
-
+            writeFilesAsListOfBooks(nameBook);
 
             backToMenu();
         }
@@ -892,7 +888,76 @@ class MenuOptions{
         }
 
         void displayAllBooks(){
-            cout << "display";
+            //Diplays all the books
+            system("cls");
+            cin.clear();
+            cin.sync();
+
+            center(windowSize/2, "-", "List of Books");
+            cout << endl;
+
+            vector<string> bookTitles;
+            fstream readFile(".\\src\\Database\\ListOfBooks_Cache.dat", ios::in | ios::out | ios::app);
+            if(!readFile.is_open()){
+                cout << endl;
+                center(windowSize/2, " ", "error occured while opening the file, Please try again");
+            }else{
+                cout << endl;
+                center(windowSize/2, " ", "Here are the list of our books");
+                string input;
+                while(readFile >> input){//check every lines
+                    bookTitles.push_back(input);
+                }
+
+                for(string i : bookTitles){
+                    // cout << i << endl;
+                    if(exists(".\\src\\Database\\" + i + ".dat")){
+                        Book readBook;
+                        fstream readBookFile(".\\src\\Database\\" + i + ".dat", ios::in | ios::out);
+                        getline(readBookFile, readBook.bookName);
+                        getline(readBookFile, readBook.authorName);
+                        getline(readBookFile, readBook.isbn);
+                        getline(readBookFile, readBook.genre);
+                        readBookFile >> readBook.quantity;
+
+                        int buffAllowance = 80;
+
+                        // cout << readBook.bookName << readBook.quantity << endl;
+                        buffer(windowSize / 7, " ");
+                        cout << readBook.isbn;
+                        buffer(20 - readBook.isbn.length(), " ");
+                        cout << readBook.bookName;
+                        buffer(buffAllowance - readBook.bookName.length(), "-");
+                        if(readBook.quantity == 0){
+                            cout << "BOOK NOT AVAILABLE" << endl;
+                        }else{
+                            if(readBook.quantity == 1){
+                                cout << readBook.quantity << "pc" << endl;
+                            }else{
+                                cout << readBook.quantity << "pcs" << endl;
+                            }
+                        }
+                        
+                    }
+                }
+
+                backToMenu();
+            }
+
+
         }
 
+        void writeFilesAsListOfBooks(string bookName){
+            fstream file(".\\src\\Database\\ListOfBooks_Cache.dat", ios::in | ios::out | ios::app);
+            // file.seekg(0);
+                if(!file.is_open()){
+                    cout << endl;
+                    center(windowSize/2, " ", "error occured while opening the file, Please try again");
+                }else{
+                    file << convertToUnderScore(bookName) << endl;
+                }
+
+            file.close();
+            
+        }
 };
