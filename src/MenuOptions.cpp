@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cstring>
 
+
 // #include "./Book.cpp"
 
 using namespace std;
@@ -52,6 +53,22 @@ class MenuOptions{
             } else {
                 return false;
             }   
+        }
+        
+        string convertToUnderScore(string text){
+            int length = text.size();
+            int x = 0;
+            string fixed;
+
+            while(x != length) {
+                string letter = text.substr(x, 1);
+                if (letter == " ") {
+                    letter = "_";}
+                    fixed = fixed + letter;
+                    x = x + 1;
+            }
+
+            return fixed;
         }
 
         void links(){
@@ -114,16 +131,16 @@ class MenuOptions{
                     deleteBookRecord();
                     flag = false;
                 }else if(pickMenu == 4){
-                    // borrowBook();
+                    borrowBook();
                     flag = false;
                 }else if(pickMenu == 5){
-                    // returnBook();
+                    returnBook();
                     flag = false;
                 }else if(pickMenu == 6){
-                    // viewRecord();
+                    editRecord();
                     flag = false;
                 }else if(pickMenu == 7){
-                    // exitProgram();
+                    exitProgram();
                     flag = false;
                 }
             }
@@ -158,12 +175,18 @@ class MenuOptions{
             buffer(windowSize / 3, " ");
             cout << "Enter the Quantity: ";
             cin >> qty;
+            while(qty > 100){
+                buffer(windowSize / 3, " ");
+                cout << "Enter the Quantity, The limit is 100 copies only: ";
+                cin >> qty;
+            }
 
             // for writing files
             Book newBook(nameBook, authorName, isbn, genre, qty);
+            transform(nameBook.begin(), nameBook.end(), nameBook.begin(), ::tolower);
             // cout << exists("HumptyD1umpy.dat");
-            if(!exists(".\\src\\Database\\" + nameBook + ".dat")){
-                fstream file(".\\src\\Database\\" + nameBook + ".dat" , ios::in | ios::out | ios:: trunc);
+            if(!exists(".\\src\\Database\\" + convertToUnderScore(nameBook) + ".dat")){
+                fstream file(".\\src\\Database\\" + convertToUnderScore(nameBook) + ".dat" , ios::in | ios::out | ios:: trunc);
                 
                 if(!file.is_open()){
                     cout << endl;
@@ -175,11 +198,14 @@ class MenuOptions{
                     file << isbn << endl;
                     file << genre << endl;
                     file << qty;
+                    file.close();
                 }
+                
             }else{
                 cout << endl;
                 center(windowSize/2, " ", "Book Already Existed");
             }
+
 
             backToMenu();
         }
@@ -198,7 +224,7 @@ class MenuOptions{
             cout << "Enter the name of the Book: ";
             getline(cin, nameSearch);
 
-            if(!exists(".\\src\\Database\\" + nameSearch + ".dat")){
+            if(!exists(".\\src\\Database\\" + convertToUnderScore(nameSearch) + ".dat")){
                 cout << endl;
                 center(windowSize/2, " ", "No Book Found");
                 backToMenu();
@@ -207,7 +233,7 @@ class MenuOptions{
                 center(windowSize/2, " ", "Book Found");
                 // for reading files
                 Book readBook;
-                fstream readFile(".\\src\\Database\\" + nameSearch + ".dat", ios::in | ios::out);
+                fstream readFile(".\\src\\Database\\" + convertToUnderScore(nameSearch) + ".dat", ios::in | ios::out);
                 readFile.seekg(0);
                 if(!readFile.is_open()){
                     cout << endl;
@@ -265,7 +291,7 @@ class MenuOptions{
             cout << "Enter the name of the Book: ";
             getline(cin, deleteSearch);
 
-            if(!exists(".\\src\\Database\\" + deleteSearch + ".dat")){
+            if(!exists(".\\src\\Database\\" + convertToUnderScore(deleteSearch) + ".dat")){
                 cout << endl;
                 center(windowSize/2, " ", "No Book Found");
                 backToMenu();
@@ -274,7 +300,101 @@ class MenuOptions{
                 center(windowSize/2, " ", "Book Found");
                 // for reading files
                 Book readBook;
-                fstream readFile(".\\src\\Database\\" + deleteSearch + ".dat", ios::in | ios::out);
+                fstream readFile(".\\src\\Database\\" + convertToUnderScore(deleteSearch) + ".dat", ios::in | ios::out);
+                readFile.seekg(0);
+                if(!readFile.is_open()){
+                    cout << endl;
+                    center(windowSize/2, " ", "error occured while opening the file, Please try again");
+                }else{  
+                    getline(readFile, readBook.bookName);
+                    getline(readFile, readBook.authorName);
+                    getline(readFile, readBook.isbn);
+                    getline(readFile, readBook.genre);
+                    readFile >> readBook.quantity;
+                }
+                int buffAllowance = 50;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK TITLE: ";
+                buffer(buffAllowance - readBook.bookName.length() + 3, "-");
+                cout << " " << readBook.bookName << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "AUTHOR: ";
+                buffer(buffAllowance - readBook.authorName.length() + 7, "-");
+                cout << " " << readBook.authorName << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK ISBN: ";
+                buffer(buffAllowance - readBook.isbn.length() + 4, "-");
+                cout << " " << readBook.isbn << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK GENRE: ";
+                buffer(buffAllowance - readBook.genre.length() + 3, "-");
+                cout << " " << readBook.genre << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK QUANTITY: ";
+                buffer(buffAllowance - to_string(readBook.quantity).length(), "-");
+                cout << " " << readBook.quantity << endl;
+                readFile.close();
+                string deleteAns;
+
+                center(windowSize/2, " ", "Are you sure you want to delete this file?");
+                buffer(windowSize / 3, " ");
+                cout << "(Enter Y to delete, any key to not delete)";
+                cin >> deleteAns;
+
+                if(deleteAns == "Y" || deleteAns == "y"){
+                    //delete book
+                    cout << endl;
+                    
+                    string path = "./src/Database/" + convertToUnderScore(deleteSearch) + ".dat";
+                    // cout << path << endl;//to print the pathname
+                    if(remove(path.c_str()) != 0){
+                        buffer(windowSize / 3, " ");
+                        perror("There's an error in deleting the file.");
+                        // cout << "There's an error in deleting the file.";
+                    }else{
+                        center(windowSize/2, " ", "File Deleted!");
+                    }
+
+                    backToMenu();
+                }else{
+                    cout << endl;
+                    center(windowSize/2, " ", "Have a Nice Day!");
+                    backToMenu();
+                }
+                
+            }
+
+        }
+
+        void borrowBook(){
+            system("cls");
+            cin.clear();
+            cin.sync();
+
+            center(windowSize/2, "-", "Borrow Book");
+            cout << endl;
+
+            string borrowBook;
+
+            buffer(windowSize / 3, " ");
+            cout << "Enter the name of the Book: ";
+            getline(cin, borrowBook);
+
+            if(!exists(".\\src\\Database\\" + convertToUnderScore(borrowBook) + ".dat")){
+                cout << endl;
+                center(windowSize/2, " ", "No Book Found");
+                backToMenu();
+            }else{
+                cout << endl;
+                center(windowSize/2, " ", "Book Found");
+                // for reading files
+                Book readBook;
+                fstream readFile(".\\src\\Database\\" + convertToUnderScore(borrowBook) + ".dat", ios::in | ios::out);
                 readFile.seekg(0);
                 if(!readFile.is_open()){
                     cout << endl;
@@ -313,41 +433,199 @@ class MenuOptions{
                 buffer(buffAllowance - to_string(readBook.quantity).length(), "-");
                 cout << " " << readBook.quantity << endl;
 
-                string deleteAns;
+                readFile.close();
 
-                center(windowSize/2, " ", "Are you sure you want to delete this file?");
+                int booksToBorrowCount;
+                center(windowSize/2, " ", "You are borrowing " + borrowBook);
                 buffer(windowSize / 3, " ");
-                cout << "(Enter Y to delete, any key to not delete)";
-                cin >> deleteAns;
+                cout << "How many books do you want to borrow? ";
+                cin >> booksToBorrowCount;
 
-                if(deleteAns == "Y" || deleteAns == "y"){
-                    //delete
-                    cout << endl;
-                    
-                    char path[] = "./Database/";
-                    char filename[50];
-                    // char command[70] = "del ";
-                    strcat(filename, readBook.bookName.c_str());
-                    strcat(filename, ".dat");
-                    strcat(path, filename);
-                    // strcat(command, path);
-                    
-                    if(remove(path) != 0){
-                        cout << "There's an error in deleting the file.";
+                if(booksToBorrowCount > 0){
+                    if(booksToBorrowCount <= readBook.quantity){
+                        cout << endl;
+                        center(windowSize/2, " ", "You've Borrowed " + to_string(booksToBorrowCount) + " pc/pcs of " + readBook.bookName);
+
+                        readBook.quantity -= booksToBorrowCount;
+                        // cout << readBook.quantity;
+                        string path = "./src/Database/" + convertToUnderScore(borrowBook) + ".dat";
+
+                        // use for edit files
+                        if(remove(path.c_str()) != 0){
+                            buffer(windowSize / 3, " ");
+                            perror("There's an error in deleting the file.");
+                            // cout << "There's an error in deleting the file.";
+                        }else{
+                            Book newBook(readBook.bookName, readBook.authorName, readBook.isbn, readBook.genre, readBook.quantity);
+                            transform(readBook.bookName.begin(), readBook.bookName.end(), readBook.bookName.begin(), ::tolower);
+                            // cout << exists("HumptyD1umpy.dat");
+                            if(!exists(".\\src\\Database\\" + convertToUnderScore(readBook.bookName) + ".dat")){
+                                fstream file(".\\src\\Database\\" + convertToUnderScore(readBook.bookName) + ".dat" , ios::in | ios::out | ios:: trunc);
+                                
+                                if(!file.is_open()){
+                                    cout << endl;
+                                    center(windowSize/2, " ", "error occured while opening the file, Please try again");
+                                }else{  
+                                    // file.write((char *) &newBook, sizeof(Book));
+                                    file << readBook.bookName << endl;
+                                    file << readBook.authorName << endl;
+                                    file << readBook.isbn << endl;
+                                    file << readBook.genre << endl;
+                                    file << readBook.quantity;
+                                }
+                                file.close();
+                            }
+                        }
+                        // for writing files
+                        
+
+                        backToMenu();
                     }else{
-                        cout << "File Deleted!";
-                    }//fix these
-
-                    backToMenu();
+                        cout << endl;
+                        center(windowSize/2, " ", "Book Count Exceeded!");
+                        backToMenu();
+                    }
                 }else{
                     cout << endl;
                     center(windowSize/2, " ", "Have a Nice Day!");
                     backToMenu();
                 }
-
                 
             }
 
         }
-        
+
+        void returnBook(){
+            system("cls");
+            cin.clear();
+            cin.sync();
+
+            center(windowSize/2, "-", "Return Book");
+            cout << endl;
+
+            string returnBook;
+
+            buffer(windowSize / 3, " ");
+            cout << "Enter the name of the Book: ";
+            getline(cin, returnBook);
+
+            if(!exists(".\\src\\Database\\" + convertToUnderScore(returnBook) + ".dat")){
+                cout << endl;
+                center(windowSize/2, " ", "No Book Found");
+                backToMenu();
+            }else{
+                cout << endl;
+                center(windowSize/2, " ", "Book Found");
+                // for reading files
+                Book readBook;
+                fstream readFile(".\\src\\Database\\" + convertToUnderScore(returnBook) + ".dat", ios::in | ios::out);
+                readFile.seekg(0);
+                if(!readFile.is_open()){
+                    cout << endl;
+                    center(windowSize/2, " ", "error occured while opening the file, Please try again");
+                }else{  
+                    getline(readFile, readBook.bookName);
+                    getline(readFile, readBook.authorName);
+                    getline(readFile, readBook.isbn);
+                    getline(readFile, readBook.genre);
+                    readFile >> readBook.quantity;
+                }
+                int buffAllowance = 50;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK TITLE: ";
+                buffer(buffAllowance - readBook.bookName.length() + 3, "-");
+                cout << " " << readBook.bookName << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "AUTHOR: ";
+                buffer(buffAllowance - readBook.authorName.length() + 7, "-");
+                cout << " " << readBook.authorName << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK ISBN: ";
+                buffer(buffAllowance - readBook.isbn.length() + 4, "-");
+                cout << " " << readBook.isbn << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK GENRE: ";
+                buffer(buffAllowance - readBook.genre.length() + 3, "-");
+                cout << " " << readBook.genre << endl;
+
+                buffer(windowSize / 3.8, " ");
+                cout << "BOOK QUANTITY: ";
+                buffer(buffAllowance - to_string(readBook.quantity).length(), "-");
+                cout << " " << readBook.quantity << endl;
+
+                readFile.close();
+
+                int booksToReturnCount;
+                center(windowSize/2, " ", "You are returning " + returnBook);
+                buffer(windowSize / 3, " ");
+                cout << "How many books do you want to return? ";
+                cin >> booksToReturnCount;
+
+                if(booksToReturnCount > 0){
+                    if(booksToReturnCount + readBook.quantity <= 100){
+                        cout << endl;
+                        center(windowSize/2, " ", "You've Returned " + to_string(booksToReturnCount) + " pc/pcs of " + readBook.bookName);
+
+                        readBook.quantity += booksToReturnCount;
+                        // cout << readBook.quantity;
+                        string path = "./src/Database/" + convertToUnderScore(returnBook) + ".dat";
+
+                        // use for edit files
+                        if(remove(path.c_str()) != 0){
+                            buffer(windowSize / 3, " ");
+                            perror("There's an error in deleting the file.");
+                            // cout << "There's an error in deleting the file.";
+                        }else{
+                            Book newBook(readBook.bookName, readBook.authorName, readBook.isbn, readBook.genre, readBook.quantity);
+                            transform(readBook.bookName.begin(), readBook.bookName.end(), readBook.bookName.begin(), ::tolower);
+                            // cout << exists("HumptyD1umpy.dat");
+                            if(!exists(".\\src\\Database\\" + convertToUnderScore(readBook.bookName) + ".dat")){
+                                fstream file(".\\src\\Database\\" + convertToUnderScore(readBook.bookName) + ".dat" , ios::in | ios::out | ios:: trunc);
+                                
+                                if(!file.is_open()){
+                                    cout << endl;
+                                    center(windowSize/2, " ", "error occured while opening the file, Please try again");
+                                }else{  
+                                    // file.write((char *) &newBook, sizeof(Book));
+                                    file << readBook.bookName << endl;
+                                    file << readBook.authorName << endl;
+                                    file << readBook.isbn << endl;
+                                    file << readBook.genre << endl;
+                                    file << readBook.quantity;
+                                }
+                                file.close();
+                            }
+                        }
+                        // for writing files
+                        
+
+                        backToMenu();
+                    }else{
+                        cout << endl;
+                        center(windowSize/2, " ", "Book Count Exceeded!");
+                        backToMenu();
+                    }
+                }else{
+                    cout << endl;
+                    center(windowSize/2, " ", "Have a Nice Day!");
+                    backToMenu();
+                }
+                
+            }
+
+        }
+
+        void editRecord(){
+            //edit
+        }
+
+        void exitProgram(){
+            system("cls");
+            exit(0);
+        }
+
 };

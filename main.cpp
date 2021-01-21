@@ -11,7 +11,7 @@ using namespace std;
 int main(){
 
     MenuOptions menu;
-    // menu.menuOptions();
-    menu.deleteBookRecord();
+    menu.menuOptions();
+    // menu.deleteBookRecord();
 
 }

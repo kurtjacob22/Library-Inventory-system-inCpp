@@ -49,7 +49,15 @@ Student get_data(fstream &read){
 int main(){
     // ofstream f;//write
     // ifstream r;//read
-    fstream write("record.txt", ios::in | ios::out);
-    // insert_data(write);
-    get_data(write);
+    // fstream write("record.txt", ios::in | ios::out);
+    // // insert_data(write);
+    // get_data(write);
+    string file;
+    cout << "Enter Filename : ";
+    cin >> file;
+    string folder = "./sample/";
+    string filename = file.append(".dat");
+    string path = folder.append(filename);
+    cout << path.c_str();
+    remove(path.c_str());
 } 
