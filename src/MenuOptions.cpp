@@ -52,11 +52,10 @@ class MenuOptions{
         }
         
         string convertToUnderScore(string text){
-            int length = text.size();
             int x = 0;
             string fixed;
 
-            while(x != length) {
+            while(x != text.size()) {
                 string letter = text.substr(x, 1);
                 if (letter == " ") {
                     letter = "_";}
@@ -65,6 +64,13 @@ class MenuOptions{
             }
 
             return fixed;
+        }
+
+        void headerTitle(){
+            system("Color 70");
+            center(windowSize/2, "-", "-");
+            center(windowSize/2, "+", "PLM LIBRARY SYSTEM");
+            center(windowSize/2, "-", "-");
         }
 
         void links(){
@@ -76,10 +82,11 @@ class MenuOptions{
                 "5. Return Book",
                 "6. Edit Record",
                 "7. View All Books",
-                "8. Exit"
+                "8. View Books by Genre",
+                "9. Exit"
             };
-            cout << endl;
-            center(windowSize/2, "-", "LIBRARY INVENTORY SYSTEM");
+            center(windowSize/2, "-", "SERVICES:");
+            center(windowSize/2, "-", "-");
             cout << endl;
             for(string i : options){
                 buffer(windowSize / 2.3, " ");
@@ -100,48 +107,46 @@ class MenuOptions{
                 system("exit");
             }
         }   
-        
+
+        bool isInArray(string &value, vector<std::string> &array){
+            return std::find(array.begin(), array.end(), value) != array.end();
+        }
+
         void menuOptions(){
             system("cls");
-            // system("color 70");
-            int pickMenu;
+            vector<string> choices = {"1","2","3","4","5","6","7","8","9"};
+            string pickMenu;
             do{
                 system("cls");
+                headerTitle();
                 links();//displays the menu's
-
+                
                 cout << endl;
                 buffer(windowSize / 2.3, " ");
                 cout << "Pick a Number: ";
-                cin >> pickMenu;
+                getline(cin, pickMenu);
 
-            }while(pickMenu > 8 || pickMenu < 1);
+            }while(pickMenu == "" || !isInArray(pickMenu, choices));
 
-            bool flag = true;
-            while(flag){
-                if(pickMenu == 1){
+            while(true){
+                if(pickMenu == "1"){
                     addBook();
-                    flag = false;
-                }else if(pickMenu == 2){
+                }else if(pickMenu == "2"){
                     searchBook();
-                    flag = false;
-                }else if(pickMenu == 3){
+                }else if(pickMenu == "3"){
                     deleteBookRecord();
-                    flag = false;
-                }else if(pickMenu == 4){
+                }else if(pickMenu == "4"){
                     borrowBook();
-                    flag = false;
-                }else if(pickMenu == 5){
+                }else if(pickMenu == "5"){
                     returnBook();
-                    flag = false;
-                }else if(pickMenu == 6){
+                }else if(pickMenu == "6"){
                     editRecord();
-                    flag = false;
-                }else if(pickMenu == 7){
+                }else if(pickMenu == "7"){
                     displayAllBooks();
-                    flag = false;
-                }else if(pickMenu == 8){
+                }else if(pickMenu == "8"){
+                    viewBooksByGenre();
+                }else if(pickMenu == "9"){
                     exitProgram();
-                    flag = false;
                 }
             }
         }
@@ -149,11 +154,14 @@ class MenuOptions{
         void addBook(){
             cin.clear();
             cin.sync();
+            headerTitle();
             string nameBook, authorName, genre, isbn;
             int qty;
             
             system("cls");
+            headerTitle();
             center(windowSize/2, "-", "Add Book");
+            center(windowSize/2, "-", "-");
             cout << endl;
 
             buffer(windowSize / 3, " ");
@@ -183,6 +191,7 @@ class MenuOptions{
 
             // for writing files
             Book newBook(nameBook, authorName, isbn, genre, qty);
+            string origNameBook = nameBook;
             transform(nameBook.begin(), nameBook.end(), nameBook.begin(), ::tolower);
             // cout << exists("HumptyD1umpy.dat");
             if(!exists(".\\src\\Database\\" + convertToUnderScore(nameBook) + ".dat")){
@@ -192,8 +201,7 @@ class MenuOptions{
                     cout << endl;
                     center(windowSize/2, " ", "error occured while opening the file, Please try again");
                 }else{  
-                    // file.write((char *) &newBook, sizeof(Book));
-                    file << nameBook << endl;
+                    file << origNameBook << endl;
                     file << authorName << endl;
                     file << isbn << endl;
                     file << genre << endl;
@@ -214,10 +222,10 @@ class MenuOptions{
             system("cls");
             cin.clear();
             cin.sync();
-
+            headerTitle();
             center(windowSize/2, "-", "Search Book");
+            center(windowSize/2, "-", "-");
             cout << endl;
-
             string nameSearch;
 
             buffer(windowSize / 3, " ");
@@ -283,8 +291,9 @@ class MenuOptions{
             system("cls");
             cin.clear();
             cin.sync();
-
+            headerTitle();
             center(windowSize/2, "-", "Delete Book Record");
+            center(windowSize/2, "-", "-");
             cout << endl;
 
             string deleteSearch;
@@ -377,8 +386,9 @@ class MenuOptions{
             system("cls");
             cin.clear();
             cin.sync();
-
+            headerTitle();
             center(windowSize/2, "-", "Borrow Book");
+            center(windowSize/2, "-", "-");
             cout << endl;
 
             string borrowBook;
@@ -501,8 +511,9 @@ class MenuOptions{
             system("cls");
             cin.clear();
             cin.sync();
-
+            headerTitle();
             center(windowSize/2, "-", "Return Book");
+            center(windowSize/2, "-", "-");
             cout << endl;
 
             string returnBook;
@@ -625,8 +636,9 @@ class MenuOptions{
             system("cls");
             cin.clear();
             cin.sync();
-
+            headerTitle();
             center(windowSize/2, "-", "Edit Record");
+            center(windowSize/2, "-", "-");
             cout << endl;
 
             string editBook;
@@ -846,6 +858,14 @@ class MenuOptions{
                     readBook.quantity = newQuantity;
 
                 }
+                vector<string> handler;
+                string convertToLower = readBook.bookName;
+                transform(convertToLower.begin(), convertToLower.end(), convertToLower.begin(), ::tolower);
+                string input;
+                fstream checkIfContains(".\\src\\Database\\ListOfBooks_Cache.dat", ios::in | ios::out | ios::app);
+                while(checkIfContains >> input){//check every lines
+                    handler.push_back(input);
+                }
 
                 string path = "./src/Database/" + convertToUnderScore(editBook) + ".dat";
                 string newFilename = readBook.bookName;
@@ -876,7 +896,13 @@ class MenuOptions{
                         file.close();
                     }
                 }
-
+                for(string i : handler){
+                    if(i == convertToUnderScore(convertToLower)){
+                        backToMenu();
+                        break;
+                    }
+                }
+                writeFilesAsListOfBooks(convertToLower);
                 backToMenu();
                 
             }
@@ -892,8 +918,9 @@ class MenuOptions{
             system("cls");
             cin.clear();
             cin.sync();
-
+            headerTitle();
             center(windowSize/2, "-", "List of Books");
+            center(windowSize/2, "-", "-");
             cout << endl;
 
             vector<string> bookTitles;
@@ -937,6 +964,77 @@ class MenuOptions{
                                 cout << readBook.quantity << "pcs" << endl;
                             }
                         }
+
+                        
+                    }
+                }
+
+                backToMenu();
+            }
+
+
+        }
+
+        void viewBooksByGenre(){
+            //Diplays all the books
+            system("cls");
+            cin.clear();
+            cin.sync();
+            headerTitle();
+            center(windowSize/2, "-", "List of Books");
+            center(windowSize/2, "-", "-");
+            cout << endl;
+
+            buffer(windowSize / 3, " ");
+            string genreInput;
+            cout << "Enter Genre: ";
+            cin >> genreInput;
+
+            vector<string> bookTitles;
+            fstream readFile(".\\src\\Database\\ListOfBooks_Cache.dat", ios::in | ios::out | ios::app);
+            if(!readFile.is_open()){
+                cout << endl;
+                center(windowSize/2, " ", "error occured while opening the file, Please try again");
+            }else{
+                cout << endl;
+                center(windowSize/2, " ", "Here are the list of our books with the genre of " + genreInput);
+                string input;
+                while(readFile >> input){//check every lines
+                    bookTitles.push_back(input);
+                }
+
+                for(string i : bookTitles){
+                    // cout << i << endl;
+                    if(exists(".\\src\\Database\\" + i + ".dat")){
+                        Book readBook;
+                        fstream readBookFile(".\\src\\Database\\" + i + ".dat", ios::in | ios::out);
+                        getline(readBookFile, readBook.bookName);
+                        getline(readBookFile, readBook.authorName);
+                        getline(readBookFile, readBook.isbn);
+                        getline(readBookFile, readBook.genre);
+                        readBookFile >> readBook.quantity;
+                        transform(genreInput.begin(), genreInput.end(), genreInput.begin(), ::tolower);
+                        transform(readBook.genre.begin(), readBook.genre.end(), readBook.genre.begin(), ::tolower);
+                        if(genreInput == readBook.genre){
+                            int buffAllowance = 80;
+
+                            // cout << readBook.bookName << readBook.quantity << endl;
+                            buffer(windowSize / 7, " ");
+                            cout << readBook.isbn;
+                            buffer(20 - readBook.isbn.length(), " ");
+                            cout << readBook.bookName;
+                            buffer(buffAllowance - readBook.bookName.length(), "-");
+                            if(readBook.quantity == 0){
+                                cout << "BOOK NOT AVAILABLE" << endl;
+                            }else{
+                                if(readBook.quantity == 1){
+                                    cout << readBook.quantity << "pc" << endl;
+                                }else{
+                                    cout << readBook.quantity << "pcs" << endl;
+                                }
+                            }
+                            
+                        }
                         
                     }
                 }
@@ -948,7 +1046,8 @@ class MenuOptions{
         }
 
         void writeFilesAsListOfBooks(string bookName){
-            fstream file(".\\src\\Database\\ListOfBooks_Cache.dat", ios::in | ios::out | ios::app);
+            fstream file(".\\src\\Database\\ListOfBooks_Cache.dat", ios::in | ios::out | ios::app);\
+                
             // file.seekg(0);
                 if(!file.is_open()){
                     cout << endl;
