@@ -42,7 +42,7 @@ class MenuOptions{
             cout << endl;
         }
 
-        inline bool exists(const std::string& name) {//checks if a certain file exists
+        inline bool exists(const string& name) {//checks if a certain file exists
             if (FILE *file = fopen(name.c_str(), "r")){
                 fclose(file);
                 return true;
@@ -108,8 +108,8 @@ class MenuOptions{
             }
         }   
 
-        bool isInArray(string &value, vector<std::string> &array){
-            return std::find(array.begin(), array.end(), value) != array.end();
+        bool isInArray(string &value, vector<string> &array){
+            return find(array.begin(), array.end(), value) != array.end();
         }
 
         void menuOptions(){
