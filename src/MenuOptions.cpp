@@ -1040,11 +1040,8 @@ class MenuOptions{
                         
                     }
                 }
-
                 backToMenu();
             }
-
-
         }
 
         void writeFilesAsListOfBooks(string bookName){ //* to append title into ListOfBooks_Cache.dat
