@@ -1,7 +1,3 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <vector>
 
 #include "./src/Book.cpp"
 #include "./src/MenuOptions.cpp"

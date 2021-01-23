@@ -4,14 +4,13 @@
 #include <vector> 
 #include <string>
 #include <algorithm>
-#include <cstring>
 
 using namespace std;
 class MenuOptions{
-    int windowSize = getScreenSize();
+    int windowSize = getScreenSize();//* initialize a global variable for the windowSize
 
     public:
-        int getScreenSize(){//to get the screen size
+        int getScreenSize(){ //? to get the screen size
             CONSOLE_SCREEN_BUFFER_INFO csbi;
             int windowSize;
 
@@ -22,13 +21,13 @@ class MenuOptions{
             return windowSize;
         }
 
-        void buffer(int bufferSize, string symbol){//half version of the center function
+        void buffer(int bufferSize, string symbol){ //? half version of the center function
             for(int j = 0; j<=bufferSize; j++){
                 cout << symbol;
             }
         }
 
-        void center(int bufferSize, string symbol, string text){// to have a more appealing interface
+        void center(int bufferSize, string symbol, string text){ //? to have a more appealing interface
             for(int j = 0; j<=bufferSize - text.length() / 2; j++){
                 cout << symbol;
             }
@@ -42,7 +41,7 @@ class MenuOptions{
             cout << endl;
         }
 
-        inline bool exists(const string& name) {//checks if a certain file exists
+        inline bool exists(const string& name) { //? checks if a certain file exists
             if (FILE *file = fopen(name.c_str(), "r")){
                 fclose(file);
                 return true;
@@ -51,7 +50,7 @@ class MenuOptions{
             }   
         }
         
-        string convertToUnderScore(string text){
+        string convertToUnderScore(string text){ //? convert spaces to underscores 
             int x = 0;
             string fixed;
 
@@ -66,14 +65,14 @@ class MenuOptions{
             return fixed;
         }
 
-        void headerTitle(){
+        void headerTitle(){ //? HEADER File for the links
             system("Color 70");
             center(windowSize/2, "-", "-");
             center(windowSize/2, "+", "PLM LIBRARY SYSTEM");
             center(windowSize/2, "-", "-");
         }
 
-        void links(){
+        void links(){ //? list of links using vector array
             vector<string> options = {
                 "1. Add Book",
                 "2. Search Book",
@@ -95,7 +94,11 @@ class MenuOptions{
 
         } 
 
-        void backToMenu(){
+        bool isInArray(string &value, vector<string> &array){ //? checks if the string is inside an array
+            return find(array.begin(), array.end(), value) != array.end();
+        }
+
+        void backToMenu(){ //* redirects user to menu
             string bcktoMenu;
             cout << endl;
             buffer(windowSize / 3, " ");
@@ -108,23 +111,20 @@ class MenuOptions{
             }
         }   
 
-        bool isInArray(string &value, vector<string> &array){
-            return find(array.begin(), array.end(), value) != array.end();
-        }
-
-        void menuOptions(){
+        void menuOptions(){ //* links for menu
             system("cls");
-            vector<string> choices = {"1","2","3","4","5","6","7","8","9"};
+            vector<string> choices = {"1","2","3","4","5","6","7","8","9"};// limit of the menu
             string pickMenu;
             do{
-                system("cls");
-                headerTitle();
+                system("cls");// clear screen
+                headerTitle(); //header title
                 links();//displays the menu's
                 
                 cout << endl;
                 buffer(windowSize / 2.3, " ");
                 cout << "Pick a Number: ";
                 getline(cin, pickMenu);
+                
 
             }while(pickMenu == "" || !isInArray(pickMenu, choices));
 
@@ -151,19 +151,21 @@ class MenuOptions{
             }
         }
 
-        void addBook(){
+        void addBook(){ //* links for add book
             cin.clear();
             cin.sync();
             headerTitle();
             string nameBook, authorName, genre, isbn;
             int qty;
             
+            //header Part
             system("cls");
             headerTitle();
             center(windowSize/2, "-", "Add Book");
             center(windowSize/2, "-", "-");
             cout << endl;
 
+            // get book details
             buffer(windowSize / 3, " ");
             cout << "Enter the ISBN of the Book: ";
             getline(cin, isbn);
@@ -218,7 +220,7 @@ class MenuOptions{
             backToMenu();
         }
 
-        void searchBook(){
+        void searchBook(){ //* links for searching a book
             system("cls");
             cin.clear();
             cin.sync();
@@ -287,7 +289,7 @@ class MenuOptions{
             }
         }
         
-        void deleteBookRecord(){
+        void deleteBookRecord(){ //* links for deleting a book record
             system("cls");
             cin.clear();
             cin.sync();
@@ -382,7 +384,7 @@ class MenuOptions{
 
         }
 
-        void borrowBook(){
+        void borrowBook(){ //* links for borrowing a book
             system("cls");
             cin.clear();
             cin.sync();
@@ -507,7 +509,7 @@ class MenuOptions{
 
         }
 
-        void returnBook(){
+        void returnBook(){ //* links for returning a book
             system("cls");
             cin.clear();
             cin.sync();
@@ -631,7 +633,7 @@ class MenuOptions{
 
         }
 
-        void editRecord(){
+        void editRecord(){ //* links for editing a record
             //edit record
             system("cls");
             cin.clear();
@@ -908,12 +910,12 @@ class MenuOptions{
             }
         }
 
-        void exitProgram(){
+        void exitProgram(){ //* links for exiting the program
             system("cls");
             exit(0);
         }
 
-        void displayAllBooks(){
+        void displayAllBooks(){ //* links for displaying all books
             //Diplays all the books
             system("cls");
             cin.clear();
@@ -975,7 +977,7 @@ class MenuOptions{
 
         }
 
-        void viewBooksByGenre(){
+        void viewBooksByGenre(){ //* links for displaying books by user's input genre
             //Diplays all the books
             system("cls");
             cin.clear();
@@ -1045,7 +1047,7 @@ class MenuOptions{
 
         }
 
-        void writeFilesAsListOfBooks(string bookName){
+        void writeFilesAsListOfBooks(string bookName){ //* to append title into ListOfBooks_Cache.dat
             fstream file(".\\src\\Database\\ListOfBooks_Cache.dat", ios::in | ios::out | ios::app);\
                 
             // file.seekg(0);
