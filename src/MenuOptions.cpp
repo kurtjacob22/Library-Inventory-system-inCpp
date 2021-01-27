@@ -8,6 +8,7 @@
 using namespace std;
 class MenuOptions{
     int windowSize = getScreenSize();//* initialize a global variable for the windowSize
+    int buffAllowance = 50;
 
     public:
         int getScreenSize(){ //? to get the screen size
@@ -255,7 +256,6 @@ class MenuOptions{
                     getline(readFile, readBook.genre);
                     readFile >> readBook.quantity;
                 }
-                int buffAllowance = 50;
 
                 buffer(windowSize / 3.8, " ");
                 cout << "BOOK TITLE: ";
@@ -283,8 +283,7 @@ class MenuOptions{
                 cout << " " << readBook.quantity << endl;
 
                 readFile.close();
-                
-
+            
                 backToMenu();
             }
         }
@@ -325,7 +324,6 @@ class MenuOptions{
                     getline(readFile, readBook.genre);
                     readFile >> readBook.quantity;
                 }
-                int buffAllowance = 50;
 
                 buffer(windowSize / 3.8, " ");
                 cout << "BOOK TITLE: ";
@@ -379,9 +377,7 @@ class MenuOptions{
                     center(windowSize/2, " ", "Have a Nice Day!");
                     backToMenu();
                 }
-                
             }
-
         }
 
         void borrowBook(){ //* links for borrowing a book
@@ -420,7 +416,6 @@ class MenuOptions{
                     getline(readFile, readBook.genre);
                     readFile >> readBook.quantity;
                 }
-                int buffAllowance = 50;
 
                 buffer(windowSize / 3.8, " ");
                 cout << "BOOK TITLE: ";
@@ -491,8 +486,6 @@ class MenuOptions{
                             }
                         }
                         // for writing files
-                        
-
                         backToMenu();
                     }else{
                         cout << endl;
@@ -504,9 +497,7 @@ class MenuOptions{
                     center(windowSize/2, " ", "Have a Nice Day!");
                     backToMenu();
                 }
-                
             }
-
         }
 
         void returnBook(){ //* links for returning a book
@@ -545,7 +536,6 @@ class MenuOptions{
                     getline(readFile, readBook.genre);
                     readFile >> readBook.quantity;
                 }
-                int buffAllowance = 50;
 
                 buffer(windowSize / 3.8, " ");
                 cout << "BOOK TITLE: ";
@@ -615,8 +605,6 @@ class MenuOptions{
                                 file.close();
                             }
                         }
-                        
-
                         backToMenu();
                     }else{
                         cout << endl;
@@ -628,9 +616,7 @@ class MenuOptions{
                     center(windowSize/2, " ", "Have a Nice Day!");
                     backToMenu();
                 }
-                
             }
-
         }
 
         void editRecord(){ //* links for editing a record
@@ -670,7 +656,6 @@ class MenuOptions{
                     getline(readFile, readBook.genre);
                     readFile >> readBook.quantity;
                 }
-                int buffAllowance = 50;
 
                 buffer(windowSize / 3.8, " ");
                 cout << "BOOK TITLE: ";
@@ -850,7 +835,6 @@ class MenuOptions{
                         buffer(windowSize / 3, " ");
                         cout << "Change " << readBook.quantity << " pc/pcs to: ";
                         cin >> newQuantity;
-                        
                     }
 
                     readBook.bookName = newBookName;
@@ -906,7 +890,6 @@ class MenuOptions{
                 }
                 writeFilesAsListOfBooks(convertToLower);
                 backToMenu();
-                
             }
         }
 
@@ -966,15 +949,10 @@ class MenuOptions{
                                 cout << readBook.quantity << "pcs" << endl;
                             }
                         }
-
-                        
                     }
                 }
-
                 backToMenu();
             }
-
-
         }
 
         void viewBooksByGenre(){ //* links for displaying books by user's input genre
@@ -1035,9 +1013,7 @@ class MenuOptions{
                                     cout << readBook.quantity << "pcs" << endl;
                                 }
                             }
-                            
-                        }
-                        
+                        }  
                     }
                 }
                 backToMenu();
@@ -1054,8 +1030,6 @@ class MenuOptions{
                 }else{
                     file << convertToUnderScore(bookName) << endl;
                 }
-
-            file.close();
-            
+            file.close(); 
         }
 };
