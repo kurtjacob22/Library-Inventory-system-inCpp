@@ -522,14 +522,12 @@ class MenuOptions{
         void editBorrowerList(string filename, int Bookcount, string name){
             string path = "./src/Database/BorrowerData/" + convertToUnderScore(filename) + ".dat";
             fstream readFile(".\\src\\Database\\BorrowerData\\" + convertToUnderScore(filename) + ".dat" , ios::in | ios::out);
-
             vector<string> borrowers;
             string input;
             while(getline(readFile, input)){//check every lines
                 transform(input.begin(), input.end(), input.begin(), ::tolower);
                 borrowers.push_back(input);
             }
-
             if (find(borrowers.begin(), borrowers.end(), name) != borrowers.end()){
                 readFile.close();
             }else{
@@ -537,10 +535,6 @@ class MenuOptions{
                 center(windowSize/2, " ", "Invalid Name!");
                 backToMenu();
             }
-                
-
-            
-
             // use for edit files
             if(remove(path.c_str()) != 0){
                 buffer(windowSize / 3, " ");
