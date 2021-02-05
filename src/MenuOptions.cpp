@@ -481,6 +481,9 @@ class MenuOptions{
                                     file << readBook.isbn << endl;
                                     file << readBook.genre << endl;
                                     file << readBook.quantity;
+                                    
+                                    addToBorrowersList(readBook.bookName, booksToBorrowCount);
+
                                 }
                                 file.close();
                             }
@@ -497,6 +500,69 @@ class MenuOptions{
                     center(windowSize/2, " ", "Have a Nice Day!");
                     backToMenu();
                 }
+            }
+        }
+
+        void addToBorrowersList(string filename, int Bookcount){
+            cin.clear();
+            cin.sync();
+            string borrower;
+            cout << endl;
+            buffer(windowSize/3, " ");
+            cout << "Enter your Name: ";
+            getline(cin, borrower);
+            transform(borrower.begin(), borrower.end(), borrower.begin(), ::tolower);
+
+            fstream file(".\\src\\Database\\BorrowerData\\" + convertToUnderScore(filename) + ".dat", ios::in | ios::out | ios::app);
+            file << convertToUnderScore(borrower) << endl;
+            file.close();
+
+        }
+
+        void editBorrowerList(string filename, int Bookcount, string name){
+            string path = "./src/Database/BorrowerData/" + convertToUnderScore(filename) + ".dat";
+            fstream readFile(".\\src\\Database\\BorrowerData\\" + convertToUnderScore(filename) + ".dat" , ios::in | ios::out);
+
+            vector<string> borrowers;
+            string input;
+            while(getline(readFile, input)){//check every lines
+                transform(input.begin(), input.end(), input.begin(), ::tolower);
+                borrowers.push_back(input);
+            }
+
+            if (find(borrowers.begin(), borrowers.end(), name) != borrowers.end()){
+                readFile.close();
+            }else{
+                readFile.close();
+                center(windowSize/2, " ", "Invalid Name!");
+                backToMenu();
+            }
+                
+
+            
+
+            // use for edit files
+            if(remove(path.c_str()) != 0){
+                buffer(windowSize / 3, " ");
+                perror("There's an error in deleting the file.");
+                // cout << "There's an error in deleting the file.";
+            }else{
+                fstream file(".\\src\\Database\\BorrowerData\\" + convertToUnderScore(filename) + ".dat" , ios::in | ios::out | ios::trunc);
+                
+                if(!file.is_open()){
+                    cout << endl;
+                    center(windowSize/2, " ", "error occured while opening the file, Please try again");
+                }else{
+
+
+                
+                    for(int i = 0; i < borrowers.size(); i++){
+                        if(borrowers.at(i) != convertToUnderScore(name)){
+                            file << borrowers.at(i) << endl;
+                        }
+                    }
+                }
+                file.close();
             }
         }
 
@@ -563,15 +629,26 @@ class MenuOptions{
                 cout << " " << readBook.quantity << endl;
 
                 readFile.close();
-
+                string borrowersName;
                 int booksToReturnCount;
                 center(windowSize/2, " ", "You are returning " + returnBook);
+
+                buffer(windowSize / 3, " ");
+                cout << "Please Enter your name: ";
+                getline(cin, borrowersName);
+                transform(borrowersName.begin(), borrowersName.end(), borrowersName.begin(), ::tolower);
+                
+                
+
                 buffer(windowSize / 3, " ");
                 cout << "How many books do you want to return? ";
                 cin >> booksToReturnCount;
 
                 if(booksToReturnCount > 0){
                     if(booksToReturnCount + readBook.quantity <= 100){
+
+                        editBorrowerList(readBook.bookName, booksToReturnCount, borrowersName);
+
                         cout << endl;
                         center(windowSize/2, " ", "You've Returned " + to_string(booksToReturnCount) + " pc/pcs of " + readBook.bookName);
 
@@ -617,7 +694,7 @@ class MenuOptions{
                     backToMenu();
                 }
             }
-        }
+        }     
 
         void editRecord(){ //* links for editing a record
             //edit record
