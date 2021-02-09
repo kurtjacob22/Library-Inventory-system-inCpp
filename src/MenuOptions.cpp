@@ -108,7 +108,7 @@ class MenuOptions{
             if(bcktoMenu == "B" || bcktoMenu == "b"){
                 menuOptions();
             }else{
-                system("exit");
+                exit(0);
             }
         }   
 
