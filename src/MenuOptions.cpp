@@ -641,7 +641,7 @@ class MenuOptions{
                 if(booksToReturnCount > 0){
                     if(booksToReturnCount + readBook.quantity <= 100){
 
-                        editBorrowerList(readBook.bookName, booksToReturnCount, borrowersName);
+                        editBorrowerList(readBook.bookName, booksToReturnCount, convertToUnderScore(borrowersName));
 
                         cout << endl;
                         center(windowSize/2, " ", "You've Returned " + to_string(booksToReturnCount) + " pc/pcs of " + readBook.bookName);
@@ -1006,7 +1006,7 @@ class MenuOptions{
                         int buffAllowance = 80;
 
                         // cout << readBook.bookName << readBook.quantity << endl;
-                        buffer(windowSize / 7, " ");
+                        buffer(windowSize / 10, " ");
                         cout << readBook.isbn;
                         buffer(20 - readBook.isbn.length(), " ");
                         cout << readBook.bookName;
